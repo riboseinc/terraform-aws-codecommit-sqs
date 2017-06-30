@@ -1,0 +1,94 @@
+# Terraform Module For CodeCommit + SQS
+
+CodeCommit repos created using this terraform module is compatible with
+the Jenkins AWS CodeCommit Trigger Plugin, i.e., changes to the git repo
+automatically triggers the plugin.
+
+
+## Sample Usage
+
+``` t
+variable "aws-account-id" {
+  default = "my-aws-account-id"
+}
+
+module "cc-example_repo" {
+  source = "https://github.com/riboseinc/tf-codecommit-sqs"
+  reponame = "example-repo"
+  aws-account-id = "${var.aws-account-id}"
+  # email-sns-arn = "${aws_sns_topic.codecommit-email.arn}"
+}
+
+output "cc-example_repo-cc-arn" {
+  value = "${module.cc-example_repo.cc-arn}"
+}
+output "cc-example_repo-sqs-id" {
+  value = "${module.cc-example_repo.sqs-id}"
+}
+output "cc-example_repo-sqs-arn" {
+  value = "${module.cc-example_repo.sqs-arn}"
+}
+output "cc-example_repo-sns-name" {
+  value = "${module.cc-example_repo.sns-name}"
+}
+output "cc-example_repo-sns-arn" {
+  value = "${module.cc-example_repo.sns-arn}"
+}
+```
+
+## Enabling With An Email Notification
+
+Some people prefer receiving an email on every commit.
+
+This is how you set it up.
+
+``` terraform
+resource "aws_sns_topic" "codecommit-email" {
+  name = "codecommit-email-notifications"
+  display_name = "CodeCommit notifications"
+}
+
+resource "aws_sns_topic_policy" "codecommit-email-sns-policy" {
+  arn = "${aws_sns_topic.codecommit-email.arn}"
+  policy = "${data.aws_iam_policy_document.codecommit-email-sns-policy.json}"
+}
+
+data "aws_iam_policy_document" "codecommit-email-sns-policy" {
+  statement {
+    sid = "AllowSubscription"
+    effect = "Allow"
+    principals {
+      type = "AWS"
+      identifiers = [ "*" ]
+    }
+    actions = [
+      "SNS:Publish",
+      "SNS:RemovePermission",
+      "SNS:SetTopicAttributes",
+      "SNS:DeleteTopic",
+      "SNS:ListSubscriptionsByTopic",
+      "SNS:GetTopicAttributes",
+      "SNS:Receive",
+      "SNS:AddPermission",
+      "SNS:Subscribe"
+    ]
+    resources = [ "${aws_sns_topic.codecommit-email.arn}" ]
+    condition {
+      test = "StringEquals"
+      variable = "AWS:SourceOwner"
+      values = [ "${var.aws-account-id}" ]
+    }
+  }
+
+}
+
+output "email-sns-arn" {
+  # value = "${data.template_file.cloudformation_sns_stack..outputs["ARN"]}}"
+  value = "${aws_sns_topic.codecommit-email.arn}"
+}
+
+output "email-sns-name" {
+  value = "${aws_sns_topic.codecommit-email.name}"
+}
+```
+
