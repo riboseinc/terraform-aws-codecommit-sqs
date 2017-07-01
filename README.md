@@ -7,7 +7,7 @@ automatically triggers the plugin.
 
 ## Sample Usage
 
-``` t
+``` tf
 variable "aws-account-id" {
   default = "my-aws-account-id"
 }
@@ -42,7 +42,7 @@ Some people prefer receiving an email on every commit.
 
 This is how you set it up.
 
-``` terraform
+``` tf
 resource "aws_sns_topic" "codecommit-email" {
   name = "codecommit-email-notifications"
   display_name = "CodeCommit notifications"
