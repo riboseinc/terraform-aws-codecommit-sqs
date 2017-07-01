@@ -1,13 +1,14 @@
-# Terraform Module For CodeCommit + SQS
+= Terraform Module For CodeCommit + SQS
 
 CodeCommit repos created using this terraform module is compatible with
 the Jenkins AWS CodeCommit Trigger Plugin, i.e., changes to the git repo
 automatically triggers the plugin.
 
 
-## Sample Usage
+== Sample Usage
 
-``` tf
+[source,go]
+----
 variable "aws-account-id" {
   default = "my-aws-account-id"
 }
@@ -34,15 +35,16 @@ output "cc-example_repo-sns-name" {
 output "cc-example_repo-sns-arn" {
   value = "${module.cc-example_repo.sns-arn}"
 }
-```
+----
 
-## Enabling With An Email Notification
+== Enabling With An Email Notification
 
 Some people prefer receiving an email on every commit.
 
 This is how you set it up.
 
-``` tf
+[source,go]
+----
 resource "aws_sns_topic" "codecommit-email" {
   name = "codecommit-email-notifications"
   display_name = "CodeCommit notifications"
@@ -90,5 +92,5 @@ output "email-sns-arn" {
 output "email-sns-name" {
   value = "${aws_sns_topic.codecommit-email.name}"
 }
-```
+----
 
