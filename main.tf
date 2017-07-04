@@ -6,7 +6,7 @@ provider "aws" {
 resource "aws_codecommit_repository" "main" {
   provider = "aws.regional"
   repository_name = "${var.reponame}"
-  description = "${var.reponame}"
+  description = "CodeCommit repo: ${var.reponame}"
   default_branch = "master"
 }
 
