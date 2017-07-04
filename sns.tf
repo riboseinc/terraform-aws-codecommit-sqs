@@ -1,7 +1,7 @@
 resource "aws_sns_topic" "main" {
   provider = "aws.regional"
   name = "codecommit-${var.reponame}-topic"
-  display_name = "Ribose CodeCommit ${var.reponame} notifications"
+  display_name = "CodeCommit ${var.reponame} notifications"
 }
 
 resource "aws_sns_topic_policy" "main" {
