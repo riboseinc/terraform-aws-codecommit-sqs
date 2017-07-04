@@ -1,8 +1,9 @@
 = Terraform Module For CodeCommit + SQS
 
 CodeCommit repos created using this terraform module is compatible with
-the Jenkins AWS CodeCommit Trigger Plugin, i.e., changes to the git repo
-automatically triggers the plugin.
+the
+https://github.com/riboseinc/aws-codecommit-trigger-plugin[Jenkins AWS CodeCommit Trigger Plugin],
+i.e., changes to the git repo automatically triggers the plugin.
 
 
 == Sample Usage
@@ -14,7 +15,7 @@ variable "aws-account-id" {
 }
 
 module "cc-example_repo" {
-  source = "https://github.com/riboseinc/tf-codecommit-sqs"
+  source = "github.com/riboseinc/tf-codecommit-sqs"
   reponame = "example-repo"
   aws-account-id = "${var.aws-account-id}"
   # email-sns-arn = "${aws_sns_topic.codecommit-email.arn}"
@@ -85,12 +86,19 @@ data "aws_iam_policy_document" "codecommit-email-sns-policy" {
 }
 
 output "email-sns-arn" {
-  # value = "${data.template_file.cloudformation_sns_stack..outputs["ARN"]}}"
   value = "${aws_sns_topic.codecommit-email.arn}"
 }
 
 output "email-sns-name" {
   value = "${aws_sns_topic.codecommit-email.name}"
+}
+
+# Link it with this module
+module "cc-example_repo" {
+  source = "github.com/riboseinc/tf-codecommit-sqs"
+  reponame = "example-repo"
+  aws-account-id = "${var.aws-account-id}"
+  email-sns-arn = "${aws_sns_topic.codecommit-email.arn}"
 }
 ----
 
