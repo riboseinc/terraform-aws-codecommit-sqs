@@ -14,21 +14,58 @@ variable "aws-account-id" {
   default = "my-aws-account-id"
 }
 
+variable "sns-topic-prefix" {
+  default = "codecommit-"
+}
+
+variable "sns-topic-suffix" {
+  default = "-topic"
+}
+
+resource "aws_sqs_queue" "main" {
+  name = "codecommit-notifications-queue"
+  delay_seconds = 90
+  max_message_size = 2048
+  message_retention_seconds = 86400
+  receive_wait_time_seconds = 10
+}
+
+resource "aws_sqs_queue_policy" "sns" {
+  queue_url = "${aws_sqs_queue.main.id}"
+  policy = "${data.aws_iam_policy_document.sns-sqs-policy.json}"
+}
+
+data "aws_iam_policy_document" "sns-sqs-policy" {
+  policy_id = "arn:aws:sqs:us-east-1:${var.aws-account-id}:testing/SQSDefaultPolicy"
+
+  statement {
+    sid = "SubscribeToSNS"
+    effect = "Allow"
+    principals {
+      type = "AWS"
+      identifiers = [ "*" ]
+    }
+    actions = [ "SQS:SendMessage" ]
+    resources = [ "${aws_sqs_queue.main.arn}" ]
+    condition {
+      test = "ArnLike"
+      variable = "aws:SourceArn"
+      values = [ "arn:aws:sns:us-east-1:${var.aws-account-id}:${var.sns-topic-prefix}*${var.sns-topic-suffix}" ]
+    }
+  }
+}
+
 module "cc-example_repo" {
   source = "github.com/riboseinc/tf-codecommit-sqs"
   reponame = "example-repo"
   aws-account-id = "${var.aws-account-id}"
+  sqs-arn = "${aws_sqs_queue.main.arn}"
+  sqs-id = "${aws_sqs_queue.main.id}"
   # email-sns-arn = "${aws_sns_topic.codecommit-email.arn}"
 }
 
 output "cc-example_repo-cc-arn" {
   value = "${module.cc-example_repo.cc-arn}"
-}
-output "cc-example_repo-sqs-id" {
-  value = "${module.cc-example_repo.sqs-id}"
-}
-output "cc-example_repo-sqs-arn" {
-  value = "${module.cc-example_repo.sqs-arn}"
 }
 output "cc-example_repo-sns-name" {
   value = "${module.cc-example_repo.sns-name}"
@@ -99,6 +136,8 @@ module "cc-example_repo" {
   reponame = "example-repo"
   aws-account-id = "${var.aws-account-id}"
   email-sns-arn = "${aws_sns_topic.codecommit-email.arn}"
+  sqs-arn = "${aws_sqs_queue.main.arn}"
+  sqs-id = "${aws_sqs_queue.main.id}"
 }
 ----
 
