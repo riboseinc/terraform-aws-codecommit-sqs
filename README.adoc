@@ -61,6 +61,8 @@ module "cc-example_repo" {
   aws-account-id = "${var.aws-account-id}"
   sqs-arn = "${aws_sqs_queue.main.arn}"
   sqs-id = "${aws_sqs_queue.main.id}"
+  topic-prefix = "${var.sns-topic-prefix}"
+  topic-suffix = "${var.sns-topic-suffix}"
   # email-sns-arn = "${aws_sns_topic.codecommit-email.arn}"
 }
 
@@ -136,6 +138,8 @@ module "cc-example_repo" {
   reponame = "example-repo"
   aws-account-id = "${var.aws-account-id}"
   email-sns-arn = "${aws_sns_topic.codecommit-email.arn}"
+  topic-prefix = "${var.sns-topic-prefix}"
+  topic-suffix = "${var.sns-topic-suffix}"
   sqs-arn = "${aws_sqs_queue.main.arn}"
   sqs-id = "${aws_sqs_queue.main.id}"
 }
