@@ -1,6 +1,6 @@
 resource "aws_sns_topic" "main" {
   provider = "aws.regional"
-  name = "${var.topic-prefix}${var.reponame}-topic"
+  name = "${var.topic-prefix}${var.reponame}${var.topic-suffix}"
   display_name = "CodeCommit ${var.reponame} notifications"
 }
 

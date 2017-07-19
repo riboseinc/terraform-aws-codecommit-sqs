@@ -12,4 +12,5 @@ variable "sqs-arn" {}
 variable "sqs-id" {}
 
 variable "topic-prefix" { default = "codecommit-" }
+variable "topic-suffix" { default = "-topic" }
 
