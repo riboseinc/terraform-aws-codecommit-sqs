@@ -27,7 +27,3 @@ resource "aws_codecommit_trigger" "main" {
   }
 
 }
-
-output "cc-arn" {
-  value = "${aws_codecommit_repository.main.arn}"
-}
