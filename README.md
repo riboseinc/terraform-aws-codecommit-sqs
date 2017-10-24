@@ -5,6 +5,7 @@ the
 [Jenkins AWS CodeCommit Trigger Plugin](https://github.com/riboseinc/aws-codecommit-trigger-plugin),
 i.e., changes to the git repo automatically triggers the plugin.
 
+This module is available on the [Terraform Registry](https://registry.terraform.io/modules/riboseinc/codecommit-sqs/aws/).
 
 ## Sample Usage
 
@@ -55,7 +56,7 @@ data "aws_iam_policy_document" "sns-sqs-policy" {
 }
 
 module "cc-example_repo" {
-  source = "github.com/riboseinc/tf-codecommit-sqs"
+  source = "riboseinc/codecommit-sqs/aws"
   reponame = "example-repo"
   aws-account-id = "${var.aws-account-id}"
   sqs-arn = "${aws_sqs_queue.main.arn}"
@@ -132,7 +133,7 @@ output "email-sns-name" {
 
 # Link it with this module
 module "cc-example_repo" {
-  source = "github.com/riboseinc/tf-codecommit-sqs"
+  source = "riboseinc/codecommit-sqs/aws"
   reponame = "example-repo"
   aws-account-id = "${var.aws-account-id}"
   email-sns-arn = "${aws_sns_topic.codecommit-email.arn}"
