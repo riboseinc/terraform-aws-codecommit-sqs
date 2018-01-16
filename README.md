@@ -14,12 +14,21 @@ variable "aws-account-id" {
   default = "my-aws-account-id"
 }
 
+variable "aws-region" {
+  default = "my-aws-region"
+}
+
 variable "sns-topic-prefix" {
   default = "codecommit-"
 }
 
 variable "sns-topic-suffix" {
   default = "-topic"
+}
+
+provider "aws" {
+  region = "${var.aws-region}"
+  alias = "default"
 }
 
 resource "aws_sqs_queue" "main" {
@@ -64,6 +73,10 @@ module "cc-example_repo" {
   topic-prefix = "${var.sns-topic-prefix}"
   topic-suffix = "${var.sns-topic-suffix}"
   # email-sns-arn = "${aws_sns_topic.codecommit-email.arn}"
+
+  providers = {
+    aws = "aws.default"
+  }
 }
 
 output "cc-example_repo-cc-arn" {
@@ -141,5 +154,9 @@ module "cc-example_repo" {
   topic-suffix = "${var.sns-topic-suffix}"
   sqs-arn = "${aws_sqs_queue.main.arn}"
   sqs-id = "${aws_sqs_queue.main.id}"
+
+  providers = {
+    aws = "aws.default"
+  }
 }
 ```
