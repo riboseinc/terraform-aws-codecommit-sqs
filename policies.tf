@@ -1,5 +1,4 @@
 data "aws_iam_policy_document" "sns-policy" {
-  provider = "aws.regional"
   policy_id = "__default_policy_ID"
   statement {
     sid = "AllowSubscriptionFromSQS"
