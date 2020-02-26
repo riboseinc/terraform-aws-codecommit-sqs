@@ -1,5 +1,4 @@
 # SNS Email module
-
 # data "template_file" "cloudformation_sns_stack" {
 #   template = "${file("${path.module}/../tf_sns_email/templates/email-sns-stack.json.tpl")}"
 #
@@ -19,8 +18,6 @@
 #     Owner = "${var.codecommit-email-email-name}"
 #   }
 # }
-
 # output "sns-email-arn" {
 #   value = "${data.template_file.cloudformation_sns_stack..outputs["ARN"]}}"
 # }
-
